@@ -2,87 +2,39 @@
   "name": "api",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/api/api",
+  "sourceRoot": "apps/api/src",
   "targets": {
     "serve": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "poetry run python -m uvicorn api.main:app --reload --port 8000",
-        "cwd": "apps/api"
-      }
-    },
-    "lock": {
-      "executor": "@nxlv/python:lock",
-      "options": {
-        "update": false
-      }
-    },
-    "sync": {
-      "executor": "@nxlv/python:sync",
-      "options": {}
-    },
-    "add": {
-      "executor": "@nxlv/python:add",
-      "options": {}
-    },
-    "update": {
-      "executor": "@nxlv/python:update",
-      "options": {}
-    },
-    "remove": {
-      "executor": "@nxlv/python:remove",
-      "options": {}
+        "command": "node --enable-source-maps dist/apps/api/main.js"
+      },
+      "dependsOn": ["build"]
     },
     "build": {
-      "executor": "@nxlv/python:build",
+      "executor": "nx:run-commands",
       "outputs": [
-        "{projectRoot}/dist"
+        "{workspaceRoot}/dist/apps/api"
       ],
       "options": {
-        "outputPath": "{projectRoot}/dist",
-        "publish": false,
-        "lockedVersions": true,
-        "bundleLocalDependencies": true
+        "command": "tsc -p apps/api/tsconfig.json"
       },
       "cache": true
     },
     "lint": {
-      "executor": "@nxlv/python:flake8",
-      "outputs": [
-        "{workspaceRoot}/reports/{projectRoot}/pylint.txt"
-      ],
+      "executor": "nx:run-commands",
       "options": {
-        "outputFile": "reports/{projectRoot}/pylint.txt"
+        "command": "eslint apps/api --max-warnings=0"
       },
       "cache": true
     },
-    "test": {
-      "executor": "@nxlv/python:run-commands",
-      "outputs": [
-        "{workspaceRoot}/reports/{projectRoot}/unittests",
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+    "typecheck": {
+      "executor": "nx:run-commands",
       "options": {
-        "command": "poetry run pytest tests/",
-        "cwd": "{projectRoot}"
+        "command": "tsc -p apps/api/tsconfig.json --noEmit"
       },
       "cache": true
-    },
-    "install": {
-      "executor": "@nxlv/python:install",
-      "options": {
-        "silent": false,
-        "args": "",
-        "cacheDir": ".cache/pypoetry",
-        "verbose": false,
-        "debug": false
-      }
     }
   },
-  "tags": [],
-  "release": {
-    "version": {
-      "versionActions": "@nxlv/python/release/version-actions"
-    }
-  }
+  "tags": ["type:app"]
 }

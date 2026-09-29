@@ -3,8 +3,21 @@
   "nxCloudId": "6abc3aeebfe4a5fb6ee6f109",
   "plugins": [
     {
-      "plugin": "@nxlv/python"
+      "plugin": "@nx/js/typescript"
     }
   ],
+  "targetDefaults": {
+    "lint": {
+      "cache": true
+    },
+    "typecheck": {
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/tsconfig.base.json"
+      ]
+    }
+  },
   "analytics": true
 }

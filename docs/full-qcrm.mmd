@@ -1,0 +1,182 @@
+flowchart TB
+    %% =========================================================
+    %% QUIRÓN - ARQUITECTURA COMPLETA (v2)
+    %% Cambios vs v1:
+    %% - Handoff BP 3.4 -> Seguros 2.6 es un evento via el Event Backbone (sin flecha directa)
+    %% - Customer Happiness unificado y compartido (antes CH_BP)
+    %% - Administración: dos dominios separados (Seguros y BP)
+    %% - Operaciones BP se mantiene (definición pendiente)
+    %% - Portal del Cliente agregado como consumidor/canal (no es dominio)
+    %% - Metas agregado como dominio compartido (decisión del mapping doc)
+    %% =========================================================
+
+    subgraph CORE["Core / Spine - owns no domain data"]
+        direction LR
+        ID["Registro de Identidad<br/>ClientID - PolizaID - SiniestroID - ProyectoBPID<br/>(canonical, PII-free)"]
+        REL["Relaciones<br/>Client to Poliza (1:N)<br/>Poliza to Siniestro (1:N)<br/>Client to ProyectoBP (1:N)"]
+        BUS(["Event Backbone<br/>'Live Board'<br/>(Postgres events table)"])
+        ENT["Entity Registry<br/>Estado Compartido<br/>(lifecycle - owner - team)"]
+    end
+
+    subgraph DOMAINS["Dominios de Negocio"]
+        direction TB
+
+        subgraph COMMONDOM["Dominios Compartidos (Ambos)"]
+            direction LR
+            MKT["Marketing y Leads"]
+            VEN["Ventas"]
+            CH["Customer Happiness"]
+            META["Metas<br/>(company-level)"]
+        end
+
+        subgraph SEGUROS["Quirón Seguros"]
+            direction LR
+            POL["Polizas"]
+            SIN["Siniestros"]
+            REN["Renovaciones"]
+            PAG["Pagos"]
+            OPS_SEG["Operaciones / Postventa"]
+            ADM_SEG["Administración Seguros"]
+        end
+
+        subgraph BPDOM["Quirón Arquitectos Financieros / BP"]
+            direction TB
+            PROY_BP["Desarrollo del Proyecto BP"]
+            OPS_BP["Operaciones BP<br/>(definición pendiente)"]
+            ADM_BP["Administración BP"]
+            INT_BP["Inteligencia de Mercado<br/>y Análisis por Cliente"]
+
+            subgraph BPMODS["Módulos del Proyecto BP"]
+                direction LR
+                DD_INM["Due Diligence<br/>Inmobiliario"]
+                DD_LEG["Due Diligence<br/>Corporativo Legal"]
+                VAL["Valuación de Empresas"]
+                PROT["3.4 Planes de Protección<br/>(Seguros)"]
+                FAM["Protocolo Familiar"]
+                FID["Fideicomisos"]
+                MARCO["Marco Legal"]
+                GOB["Gobierno Corporativo"]
+                FO["Family Office"]
+                CONS["Consejero Independiente"]
+            end
+        end
+    end
+
+    subgraph SHARED["Servicios Compartidos"]
+        direction TB
+        CLI["Clientes / Cliente 360"]
+        TAR["Tareas / Agendas"]
+        DOC["Documentos"]
+    end
+
+    subgraph PORTALSG["Portal del Cliente - consumidor / canal (no es dominio)"]
+        direction TB
+        PORTAL["Portal del Cliente<br/>(ambas líneas, read-only + solicitudes)"]
+    end
+
+    subgraph HANDOFF["Regla de handoff BP -> Seguros (vía eventos)"]
+        direction TB
+        HO1["1. PROY_BP publica BPProtectionPlanRequested<br/>(ClientID + ProyectoBPID)"]
+        HO2["2. Ventas consume y abre una Oportunidad de Seguros<br/>en etapa 2.6 Presentación de propuesta<br/>(origen: ProyectoBPID)"]
+        HO3["3. Seguros sigue su flujo normal desde 2.6<br/>(ClientClassification sigue BP -> AF, sin cambio)"]
+        HO4["4. Pólizas publica PolicyActivated:<br/>PROY_BP cierra 3.4, CH arranca"]
+        HO1 --> HO2 --> HO3 --> HO4
+    end
+
+    subgraph MSG["Messaging Module - v1 build target"]
+        direction TB
+        THR["Threads / Conversaciones<br/>(bot to human handoff)"]
+        AUTO["Automation Rules<br/>('el robot')"]
+        INBOX["Advisor Inbox"]
+        subgraph ADAPTERS["Channel Adapters (pluggable)"]
+            direction LR
+            WA["WhatsApp<br/>(real)"]
+            EM["Email<br/>(real)"]
+            MOCK["MockAdapter<br/>(dev/test)"]
+            PORTAL_ADP["Portal<br/>(Fase 5)"]
+        end
+    end
+
+    %% Shared business domains
+    MKT <-->|publish/consume| BUS
+    VEN <-->|publish/consume| BUS
+    CH <-->|publish/consume| BUS
+    META <-->|publish/consume| BUS
+
+    %% Seguros domains
+    POL <-->|publish/consume| BUS
+    SIN <-->|publish/consume| BUS
+    REN <-->|publish/consume| BUS
+    PAG <-->|publish/consume| BUS
+    OPS_SEG <-->|publish/consume| BUS
+    ADM_SEG <-->|publish/consume| BUS
+
+    %% BP domains
+    PROY_BP <-->|publish/consume| BUS
+    OPS_BP <-->|publish/consume| BUS
+    ADM_BP <-->|publish/consume| BUS
+    INT_BP <-->|publish/consume| BUS
+
+    %% BP project modules belong to the BP project domain
+    PROY_BP --- DD_INM
+    PROY_BP --- DD_LEG
+    PROY_BP --- VAL
+    PROY_BP --- PROT
+    PROY_BP --- FAM
+    PROY_BP --- FID
+    PROY_BP --- MARCO
+    PROY_BP --- GOB
+    PROY_BP --- FO
+    PROY_BP --- CONS
+
+    %% Cross-business handoff: events only, no direct domain-to-domain arrow
+    PROY_BP -.->|"BPProtectionPlanRequested"| BUS
+    BUS -.->|"consumido por Ventas -> Oportunidad Seguros 2.6"| VEN
+    BUS -.->|"PolicyActivated -> cierra 3.4"| PROY_BP
+    BUS -.->|"PolicyActivated / BPClosed -> inicia CH"| CH
+    HANDOFF -.- BUS
+
+    %% Shared services
+    CLI <-->|publish/consume| BUS
+    TAR <-->|publish/consume| BUS
+    DOC <-->|publish/consume| BUS
+
+    %% Portal: consumer of read-models + channel into Messaging
+    BUS -.->|"read-models: pólizas, siniestros, pagos, docs, estado BP"| PORTAL
+    PORTAL -.->|"login resuelve a ClientID"| ID
+    PORTAL -.->|"contactar a mi asesor"| PORTAL_ADP
+
+    %% Messaging
+    THR -->|message.sent / message.received| BUS
+    AUTO -->|handoff.requested| BUS
+    BUS -->|lead.created, cobro.rechazado, etc. trigger| AUTO
+    THR -.->|resolve channel handle to party| ID
+
+    WA --> THR
+    EM --> THR
+    MOCK --> THR
+    PORTAL_ADP --> THR
+    THR --> INBOX
+
+    %% Core relationships
+    ID --- REL
+    REL --- BUS
+    BUS --- ENT
+
+    classDef core fill:#2b2d42,color:#fff,stroke:#2b2d42
+    classDef common fill:#6c7a96,color:#fff,stroke:#6c7a96
+    classDef seguros fill:#8d99ae,color:#fff,stroke:#8d99ae
+    classDef bp fill:#9a7b4f,color:#fff,stroke:#9a7b4f
+    classDef shared fill:#5c8374,color:#fff,stroke:#5c8374
+    classDef msg fill:#457b9d,color:#fff,stroke:#457b9d
+    classDef handoff fill:#d98c3f,color:#fff,stroke:#d98c3f,stroke-width:2px
+    classDef portal fill:#7b5e7b,color:#fff,stroke:#7b5e7b
+
+    class ID,REL,BUS,ENT core
+    class MKT,VEN,CH,META common
+    class POL,SIN,REN,PAG,OPS_SEG,ADM_SEG seguros
+    class PROY_BP,OPS_BP,ADM_BP,INT_BP,DD_INM,DD_LEG,VAL,PROT,FAM,FID,MARCO,GOB,FO,CONS bp
+    class CLI,TAR,DOC shared
+    class THR,AUTO,INBOX,WA,EM,MOCK,PORTAL_ADP msg
+    class HO1,HO2,HO3,HO4 handoff
+    class PORTAL portal

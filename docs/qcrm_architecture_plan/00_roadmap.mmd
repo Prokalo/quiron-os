@@ -1,0 +1,14 @@
+flowchart LR
+    T1["1 · Core / Spine"] --> T2["2 · Shared Services"]
+    T2 --> T3["3 · Messaging"]
+    T3 --> T4["4 · Seguros<br/>Marketing + Leads"]
+    T4 --> T5["5 · Seguros<br/>Sales"]
+    T5 --> T6["6 · Seguros<br/>Operations"]
+    T6 --> T7["7 · Seguros Admin<br/>+ Customer Happiness + Portal<br/>+ Intelligence"]
+    T7 --> T8["8 · BP<br/>Positioning + Sales"]
+    T8 --> T9["9 · BP<br/>Project Delivery"]
+    T9 --> T10["10 · BP<br/>Intelligence + Ops + Admin"]
+
+    T9 -.->|"BPProtectionPlanRequested<br/>(vía Event Backbone)"| T5
+    T5 -.->|"PolicyActivated<br/>cierra 3.4"| T9
+    T10 -.->|"se conecta a CH + Portal compartidos"| T7

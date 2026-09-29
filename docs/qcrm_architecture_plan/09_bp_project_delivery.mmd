@@ -1,0 +1,47 @@
+flowchart TB
+    BPSELL["✓ BP 1–2<br/>Posicionamiento + Venta"]
+    BUS(["✓ EVENT BACKBONE"])
+    SEGS26["✓ SEGUROS 2.6 → 2.12<br/>flujo normal de Venta"]
+    CHS["✓ CUSTOMER HAPPINESS<br/>compartido"]
+
+    BPSELL --> DEV["3. DESARROLLO DEL PROYECTO<br/>dominio Proyectos BP · ProyectoBPID"]
+
+    DEV --> B31["3.1 Due Diligence Inmobiliario"]
+    B31 --> B31D["Propiedades · legal/fiscal · riesgos · recomendaciones"]
+
+    DEV --> B32["3.2 Due Diligence Corporativo Legal"]
+    B32 --> B32D["Estructura · contratos · cumplimiento · riesgos"]
+
+    DEV --> B33["3.3 Valuación de Empresas"]
+    B33 --> B33D["Análisis financiero · valuación · benchmarking"]
+
+    DEV --> B34["3.4 Planes de Protección / Seguros"]
+    B34 --> HO1["1. Publica BPProtectionPlanRequested<br/>ClientID + ProyectoBPID"]
+    HO1 -.-> BUS
+    BUS -.->|"Ventas consume · abre Oportunidad de Seguros en 2.6<br/>origen ProyectoBPID · clasificación BP → AF sin cambio"| SEGS26
+    SEGS26 -.->|"Pólizas publica PolicyActivated"| BUS
+    BUS -.->|"PolicyActivated · cierra 3.4"| B34
+    BUS -.->|"PolicyActivated · inicia CH"| CHS
+
+    DEV --> B35["3.5 Protocolo Familiar"]
+    B35 --> B35D["Cuestionarios · información · acuerdos · minutas"]
+
+    DEV --> B36["3.6 Fideicomisos"]
+    B36 --> B36D["Diseño · legal/fiscal · implementación · seguimiento"]
+
+    DEV --> B37["3.7 Marco Legal"]
+    B37 --> B37D["Actas · documentos · organización · cumplimiento"]
+
+    DEV --> B38["3.8 Gobierno Corporativo"]
+    B38 --> B38D["Perfiles · pagos · evaluación · rotación · minutas"]
+
+    DEV --> B39["3.9 Family Office"]
+    B39 --> B39D["Activos · planeación patrimonial · coordinación · seguimiento"]
+
+    DEV --> B310["3.10 Consejero Independiente"]
+    B310 --> B310D["Perfil · selección · integración · seguimiento · rotación"]
+
+    classDef built fill:#e7e9ee,color:#4b5563,stroke:#9ca3af
+    classDef current fill:#f3eadc,color:#5f4527,stroke:#b4946b,stroke-width:2px
+    class BPSELL,BUS,SEGS26,CHS built
+    class DEV,B31,B31D,B32,B32D,B33,B33D,B34,HO1,B35,B35D,B36,B36D,B37,B37D,B38,B38D,B39,B39D,B310,B310D current

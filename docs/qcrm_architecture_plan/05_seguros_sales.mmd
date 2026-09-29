@@ -1,0 +1,34 @@
+flowchart TB
+    FOUNDATION["✓ CORE + SHARED + MESSAGING"]
+    MKT["✓ SEGUROS 1<br/>Marketing + Leads"]
+    FOUNDATION --> SALES["2. VENTA / PROCESO COMERCIAL"]
+    MKT --> SALES
+
+    SALES --> S21["2.1 Recepción de lead"]
+    S21 --> S22["2.2 Atención inicial"]
+    S22 --> S23["2.3 Calificación del lead<br/>segmento · ramo · aseguradora"]
+    S23 --> S24["2.4 Seguimiento y nutrición"]
+    S24 --> S25["2.5 Primera entrevista"]
+    S25 --> S26["2.6 Presentación de propuesta<br/>comparativo multiaseguradoras"]
+    S26 --> S27["2.7 Solicitud y cierre"]
+    S27 --> S28["2.8 En emisión"]
+    S28 --> S29["2.9 Póliza emitida"]
+    S29 --> S210["2.10 Entrega de póliza"]
+    S210 --> S211["2.11 Póliza emitida cobrada"]
+    S211 --> S212["2.12 Cliente activo"]
+
+    SALES --> RAMOS["SEGMENTOS Y RAMOS"]
+    RAMOS --> IND["Individual<br/>Vida · GMM · Autos · Daños"]
+    RAMOS --> EMP["Empresarial<br/>Vida Grupo · GMM Grupo · Flotillas · Daños Empresariales"]
+    SALES --> ASEG["Aseguradoras<br/>GNP · MetLife · AXA · Quálitas · otras"]
+
+    BPIN["Entrada BP (se activa en Tree 9)<br/>Ventas consume BPProtectionPlanRequested<br/>y abre una Oportunidad de Seguros en 2.6<br/>origen: ProyectoBPID · clasificación BP → AF sin cambio"]
+    BPIN -.->|"evento vía Event Backbone"| S26
+    S212 -.->|"PolicyActivated"| OUT["Evento publicado por Pólizas<br/>consumido por BP 3.4 y Customer Happiness"]
+
+    classDef built fill:#e7e9ee,color:#4b5563,stroke:#9ca3af
+    classDef current fill:#dbe7f5,color:#173b63,stroke:#7393b9,stroke-width:2px
+    classDef future fill:#ffffff,color:#6b7280,stroke:#9ca3af,stroke-dasharray:4 3
+    class FOUNDATION,MKT built
+    class SALES,S21,S22,S23,S24,S25,S26,S27,S28,S29,S210,S211,S212,RAMOS,IND,EMP,ASEG,OUT current
+    class BPIN future

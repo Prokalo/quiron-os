@@ -1,4 +1,37 @@
-.venv/
-docs/
-graphify-out/
+# Operating System
 .DS_Store
+Thumbs.db
+
+# Virtual Environments & Python Internals
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Linter & Formatter Caches
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+
+# Test & Coverage Outputs
+coverage/
+reports/
+htmlcov/
+.coverage
+.coverage.*
+*.cover
+
+# JavaScript & Nx Tooling
+node_modules/
+.nx/cache
+.nx/workspace-data
+.nx/migrate-runs
+
+# Visualization & Custom Artifacts
+graphify-out/
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example

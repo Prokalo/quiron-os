@@ -1,0 +1,31 @@
+flowchart TB
+    CORE["✓ CORE / SPINE"]
+    SHARED["✓ SERVICIOS COMPARTIDOS"]
+
+    CORE --> MSG["MESSAGING MODULE"]
+    SHARED -.-> MSG
+
+    MSG --> AUTO["Automation Rules<br/>'el robot'"]
+    MSG --> THR["Threads / Conversaciones<br/>bot ↔ humano / handoff"]
+    MSG --> INBOX["Advisor Inbox"]
+    MSG --> ADAPT["Channel Adapters<br/>pluggable"]
+
+    ADAPT --> WA["WhatsApp"]
+    ADAPT --> EM["Email"]
+    ADAPT --> MOCK["MockAdapter<br/>dev / test"]
+    ADAPT -.-> PADP["Portal<br/>reservado · se construye en Tree 7"]
+
+    THR --> INBOX
+    AUTO -.-> EVT["consume / trigger events"]
+    THR -.-> EVT2["message.sent / message.received"]
+    AUTO -.-> EVT3["handoff.requested"]
+    EVT -.-> CORE
+    EVT2 -.-> CORE
+    EVT3 -.-> CORE
+
+    classDef built fill:#e7e9ee,color:#4b5563,stroke:#9ca3af
+    classDef current fill:#e8f3f8,color:#164b63,stroke:#5f8fa8,stroke-width:2px
+    classDef future fill:#ffffff,color:#6b7280,stroke:#9ca3af,stroke-dasharray:4 3
+    class CORE,SHARED built
+    class MSG,AUTO,THR,INBOX,ADAPT,WA,EM,MOCK,EVT,EVT2,EVT3 current
+    class PADP future

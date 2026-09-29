@@ -1,0 +1,35 @@
+flowchart TB
+    FOUNDATION["✓ CORE + SHARED + MESSAGING"]
+    SALES["✓ SEGUROS 1–2<br/>Marketing + Venta"]
+    FOUNDATION --> OPS["3. OPERACIONES / SERVICIO AL CLIENTE"]
+    SALES --> OPS
+
+    OPS --> REN["3.1 Renovaciones"]
+    REN --> REN1["Próximas renovaciones"]
+    REN --> REN2["Revisión de necesidades"]
+    REN --> REN3["Cotizaciones multiaseguradoras"]
+    REN --> REN4["Gestión · emisión · confirmación"]
+
+    OPS --> SIN["3.2 Siniestros"]
+    SIN --> SIN1["Reporte"]
+    SIN --> SIN2["Validación de información"]
+    SIN --> SIN3["Gestión con aseguradora"]
+    SIN --> SIN4["Seguimiento · resolución · cierre"]
+
+    OPS --> POST["3.3 Postventa"]
+    POST --> POST1["Dudas y solicitudes"]
+    POST --> POST2["Cambios en póliza"]
+    POST --> POST3["Gestión de pagos"]
+    POST --> POST4["Actualización de datos"]
+    POST --> POST5["Cross-selling / upselling"]
+    POST --> POST6["Comunicación preventiva"]
+
+    NOTE["Customer Happiness ya no vive aquí:<br/>es un servicio compartido de ambas líneas (Tree 7)"]
+    OPS -.- NOTE
+
+    classDef built fill:#e7e9ee,color:#4b5563,stroke:#9ca3af
+    classDef current fill:#dbe7f5,color:#173b63,stroke:#7393b9,stroke-width:2px
+    classDef note fill:#ffffff,color:#6b7280,stroke:#9ca3af,stroke-dasharray:4 3
+    class FOUNDATION,SALES built
+    class OPS,REN,REN1,REN2,REN3,REN4,SIN,SIN1,SIN2,SIN3,SIN4,POST,POST1,POST2,POST3,POST4,POST5,POST6 current
+    class NOTE note

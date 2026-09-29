@@ -1,0 +1,16 @@
+flowchart TB
+    CORE["CORE / SPINE"]
+
+    CORE --> ID["Registro de Identidad<br/>ClientID · PolizaID · SiniestroID · ProyectoBPID"]
+    CORE --> REL["Relaciones<br/>Cliente → Póliza<br/>Póliza → Siniestro<br/>Cliente → Proyecto BP"]
+    CORE --> BUS(["Event Backbone / Live Board<br/>Postgres events table"])
+    CORE --> ENT["Entity Registry<br/>lifecycle · owner · team · estado compartido"]
+    CORE --> RULE["Regla de clasificación<br/>ClientClassification = BP → BusinessLine = AF"]
+
+    BUS --> NEXT["Conecta los módulos futuros<br/>sin almacenar datos de dominio"]
+    BUS --> NODIRECT["Los dominios nunca se llaman entre sí<br/>todo cruce entre dominios es un evento"]
+
+    classDef root fill:#202533,color:#fff,stroke:#202533,stroke-width:2px
+    classDef core fill:#343b52,color:#fff,stroke:#343b52
+    class CORE root
+    class ID,REL,BUS,ENT,RULE,NEXT,NODIRECT core

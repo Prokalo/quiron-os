@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "nxCloudId": "6abc3aeebfe4a5fb6ee6f109",
+  "plugins": [
+    {
+      "plugin": "@nxlv/python"
+    }
+  ],
+  "analytics": true
+}

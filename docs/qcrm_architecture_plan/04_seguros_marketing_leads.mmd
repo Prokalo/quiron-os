@@ -1,0 +1,18 @@
+flowchart TB
+    FOUNDATION["✓ CORE + SHARED + MESSAGING"]
+    FOUNDATION --> SEG["QUIRÓN SEGUROS"]
+    SEG --> MKT["1. PROSPECCIÓN Y MARKETING"]
+
+    MKT --> M11["1.1 Estrategia y planeación de marketing"]
+    MKT --> M12["1.2 Segmentación de audiencias<br/>Individual / Empresarial"]
+    MKT --> M13["1.3 Creación de contenido<br/>educativo y comercial"]
+    MKT --> M14["1.4 Ejecución de campañas<br/>multicanal"]
+    MKT --> M15["1.5 Generación de leads<br/>fuente: embajador → guarda AmbassadorID"]
+    MKT --> M16["1.6 Medición y optimización"]
+
+    M15 --> LEAD["Lead creado / calificado<br/>entrada al proceso comercial"]
+
+    classDef built fill:#e7e9ee,color:#4b5563,stroke:#9ca3af
+    classDef current fill:#dbe7f5,color:#173b63,stroke:#7393b9,stroke-width:2px
+    class FOUNDATION built
+    class SEG,MKT,M11,M12,M13,M14,M15,M16,LEAD current

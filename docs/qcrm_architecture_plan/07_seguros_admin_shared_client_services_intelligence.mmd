@@ -1,0 +1,53 @@
+flowchart TB
+    FOUNDATION["✓ CORE + SHARED + MESSAGING"]
+    OPS["✓ SEGUROS 1–3<br/>Marketing · Venta · Operaciones"]
+
+    FOUNDATION --> SEG["QUIRÓN SEGUROS — MANAGEMENT LAYER"]
+    OPS --> SEG
+
+    SEG --> ADM["4. ADMINISTRACIÓN SEGUROS<br/>dominio propio de la línea Seguros"]
+    ADM --> A41["4.1 Ingresos y contabilidad"]
+    A41 --> A41D["Ingresos · cobranza · conciliaciones · contabilidad"]
+    ADM --> A42["4.2 Estados de resultados"]
+    A42 --> A42D["Ramo · aseguradora · segmento · rentabilidad"]
+    ADM --> A43["4.3 KPIs y métricas"]
+    A43 --> A43D["Ventas · conversión · renovaciones · siniestros · satisfacción"]
+    ADM --> A44["4.4 Reportes"]
+    A44 --> A44D["Operativos · financieros · comerciales · personalizados"]
+
+    SEG --> INTEL["INTELIGENCIA DE MERCADO<br/>Y ANÁLISIS POR CLIENTE"]
+    INTEL --> I1["Análisis del entorno"]
+    INTEL --> I2["Análisis por cliente"]
+    INTEL --> I3["Dashboards y reportes"]
+
+    FOUNDATION --> SCS["SERVICIOS DE CLIENTE COMPARTIDOS<br/>ambas líneas · se construyen una sola vez"]
+
+    SCS --> CH["CUSTOMER HAPPINESS"]
+    CH --> CH1["1. Invitación a eventos"]
+    CH1 --> CH2["2. Aniversarios"]
+    CH2 --> CH3["3. Cumpleaños"]
+    CH3 --> CH4["4. Encuestas de satisfacción"]
+    CH4 --> CH5["5. Sesiones anuales de revisión"]
+    CH5 --> CH6["6. Comunicación de valor"]
+    CH6 --> CH7["7. Referidos y embajadores<br/>relación con embajadores · reconocimiento a los top"]
+
+    SCS --> PORTAL["PORTAL DEL CLIENTE<br/>consumidor de read-models + canal · no es dominio"]
+    PORTAL --> P1["1. Registro y acceso<br/>login resuelve a ClientID"]
+    P1 --> P2["2. Visualización de pólizas"]
+    P2 --> P3["3. Estado de proyecto BP<br/>se activa en Tree 9"]
+    P3 --> P4["4. Pagos y recibos"]
+    P4 --> P5["5. Solicitudes y servicios"]
+    P5 --> P6["6. Notificaciones y avisos"]
+    P6 --> P7["7. Soporte y ayuda / contactar a mi asesor<br/>vía Messaging · Portal adapter"]
+
+    OPS -.->|"PolicyActivated"| CH
+    OPS -.->|"lectura: pólizas · siniestros · pagos · docs"| PORTAL
+
+    classDef built fill:#e7e9ee,color:#4b5563,stroke:#9ca3af
+    classDef current fill:#dbe7f5,color:#173b63,stroke:#7393b9,stroke-width:2px
+    classDef shared fill:#edf7f5,color:#164e43,stroke:#5f8f82,stroke-width:2px
+    classDef future fill:#ffffff,color:#6b7280,stroke:#9ca3af,stroke-dasharray:4 3
+    class FOUNDATION,OPS built
+    class SEG,ADM,A41,A41D,A42,A42D,A43,A43D,A44,A44D,INTEL,I1,I2,I3 current
+    class SCS,CH,CH1,CH2,CH3,CH4,CH5,CH6,CH7,PORTAL,P1,P2,P4,P5,P6,P7 shared
+    class P3 future

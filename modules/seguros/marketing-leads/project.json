@@ -1,0 +1,24 @@
+{
+  "name": "seguros-marketing-leads",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "modules/seguros/marketing-leads/src",
+  "projectType": "library",
+  "tags": [
+    "type:domain",
+    "source:seguros"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/modules/seguros/marketing-leads",
+        "main": "modules/seguros/marketing-leads/src/index.ts",
+        "tsConfig": "modules/seguros/marketing-leads/tsconfig.lib.json",
+        "assets": []
+      }
+    }
+  }
+}

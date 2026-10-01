@@ -1,0 +1,24 @@
+{
+  "name": "ambassadors",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "modules/ambassadors/src",
+  "projectType": "library",
+  "tags": [
+    "type:domain",
+    "source:ambassadors"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/modules/ambassadors",
+        "main": "modules/ambassadors/src/index.ts",
+        "tsConfig": "modules/ambassadors/tsconfig.lib.json",
+        "assets": []
+      }
+    }
+  }
+}

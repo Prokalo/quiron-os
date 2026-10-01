@@ -36,5 +36,5 @@
       "cache": true
     }
   },
-  "tags": ["type:app"]
+  "tags": ["type:app", "source:backend"]
 }

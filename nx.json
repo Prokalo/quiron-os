@@ -1,9 +1,38 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "nxCloudId": "6abc3aeebfe4a5fb6ee6f109",
   "plugins": [
     {
-      "plugin": "@nx/js/typescript"
+      "plugin": "@nx/js/typescript",
+      "exclude": [
+        "modules/core/*",
+        "modules/ambassadors/*",
+        "modules/shared/tasks-agenda/*",
+        "modules/seguros/marketing-leads/*"
+      ]
+    },
+    {
+      "plugin": "@nx/js/typescript",
+      "include": [
+        "modules/core/*",
+        "modules/ambassadors/*",
+        "modules/shared/tasks-agenda/*",
+        "modules/seguros/marketing-leads/*"
+      ],
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        },
+        "build": {
+          "targetName": "build",
+          "configName": "tsconfig.lib.json"
+        }
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
     }
   ],
   "targetDefaults": {
@@ -16,6 +45,16 @@
         "default",
         "^default",
         "{workspaceRoot}/tsconfig.base.json"
+      ]
+    },
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^default"
       ]
     }
   },

@@ -113,7 +113,10 @@ temp/
 # ============================================================
 # Visualization / Generated Architecture Artifacts
 # ============================================================
-graphify-out/
+graphify-out/*
+
+# Keep the compact architecture report available
+!graphify-out/GRAPH_REPORT.md
 
 
 # ============================================================
@@ -136,3 +139,4 @@ models/
 # Local Uploads / Generated Files
 # ============================================================
 uploads/
+.hermes/

@@ -113,11 +113,7 @@ temp/
 # ============================================================
 # Visualization / Generated Architecture Artifacts
 # ============================================================
-graphify-out/*
-
-# Keep the compact architecture report available
-!graphify-out/GRAPH_REPORT.md
-
+graphify-out/
 
 # ============================================================
 # Local Databases / Runtime Data
@@ -133,6 +129,8 @@ graphify-out/*
 models/
 *.gguf
 *.onnx
+AGENTS.md
+CLAUDE.md
 
 
 # ============================================================
@@ -140,4 +138,6 @@ models/
 # ============================================================
 uploads/
 .hermes/
+handoffs/
+docs/
 

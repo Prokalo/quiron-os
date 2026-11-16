@@ -129,8 +129,8 @@ graphify-out/
 models/
 *.gguf
 *.onnx
-AGENTS.md
-CLAUDE.md
+AGENTS.local.md
+CLAUDE.local.md
 
 
 # ============================================================
@@ -138,6 +138,5 @@ CLAUDE.md
 # ============================================================
 uploads/
 .hermes/
-handoffs/
-docs/
+/handoffs/
 

@@ -5,20 +5,22 @@
   "projectType": "library",
   "tags": [
     "type:domain",
-    "source:ambassadors"
+    "source:ambassadors",
+    "layer:module"
   ],
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
-      "options": {
-        "outputPath": "dist/modules/ambassadors",
-        "main": "modules/ambassadors/src/index.ts",
-        "tsConfig": "modules/ambassadors/tsconfig.lib.json",
-        "assets": []
-      }
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": { "command": "tsc -p modules/ambassadors/tsconfig.lib.json" }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": { "command": "tsc -p modules/ambassadors/tsconfig.lib.json --noEmit" }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": { "command": "node tools/test-project.mjs ambassadors" }
     }
   }
 }

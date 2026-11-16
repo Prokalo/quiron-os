@@ -6,8 +6,13 @@ on:
     branches: [main]
 
 jobs:
-  phase-0-guardrails:
+  phase-1-0a-remediation:
     runs-on: ubuntu-latest
+    env:
+      NX_DAEMON: 'false'
+      NX_NO_CLOUD: 'true'
+      NX_SKIP_NX_CACHE: 'true'
+      NX_TUI: 'false'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

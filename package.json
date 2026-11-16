@@ -3,13 +3,22 @@
   "version": "1.0.0",
   "description": "Quirón OS monorepo",
   "private": true,
+  "workspaces": [
+    "modules/core",
+    "modules/ambassadors",
+    "modules/shared/tasks-agenda",
+    "modules/seguros/marketing-leads"
+  ],
   "main": "index.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "check:boundaries": "node tools/check-module-boundaries.mjs",
-    "check": "nx run-many -t lint typecheck build && npm run check:boundaries"
+    "check:projects": "node tools/check-projects.mjs",
+    "check:boundaries": "npm run check:projects && node tools/check-module-boundaries.mjs",
+    "lint": "nx run-many -t lint && eslint tools eslint.config.mjs --max-warnings=0",
+    "test": "npm run check:projects && node tools/test-project.mjs tools && nx run-many -t test",
+    "check": "npm run check:projects && npm run lint && nx run-many -t typecheck build && npm test && npm run check:boundaries"
   },
   "repository": {
     "type": "git",

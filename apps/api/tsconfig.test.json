@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {},
+    "rootDir": "test/fixtures",
+    "outDir": "../../dist/test-fixtures/api",
+    "types": ["node"]
+  },
+  "include": ["test/fixtures/**/*.ts"]
+}

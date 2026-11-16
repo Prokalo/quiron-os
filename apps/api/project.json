@@ -4,6 +4,11 @@
   "projectType": "application",
   "sourceRoot": "apps/api/src",
   "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/test-fixtures/api"],
+      "options": { "command": "tsc -p apps/api/tsconfig.test.json && node tools/test-project.mjs api" }
+    },
     "serve": {
       "executor": "nx:run-commands",
       "options": {
@@ -36,5 +41,5 @@
       "cache": true
     }
   },
-  "tags": ["type:app", "source:backend"]
+  "tags": ["type:app", "source:backend", "layer:app"]
 }

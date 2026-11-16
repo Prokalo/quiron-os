@@ -10,21 +10,6 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "baseUrl": ".",
-    "paths": {
-      "@quiron/core": [
-        "./modules/core/src/index.ts"
-      ],
-      "@quiron/ambassadors": [
-        "./modules/ambassadors/src/index.ts"
-      ],
-      "@quiron/tasks-agenda": [
-        "./modules/shared/tasks-agenda/src/index.ts"
-      ],
-      "@quiron/seguros-marketing-leads": [
-        "./modules/seguros/marketing-leads/src/index.ts"
-      ]
-    }
+    "resolveJsonModule": true
   }
 }

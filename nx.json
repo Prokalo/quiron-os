@@ -2,33 +2,6 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "plugins": [
     {
-      "plugin": "@nx/js/typescript",
-      "exclude": [
-        "modules/core/*",
-        "modules/ambassadors/*",
-        "modules/shared/tasks-agenda/*",
-        "modules/seguros/marketing-leads/*"
-      ]
-    },
-    {
-      "plugin": "@nx/js/typescript",
-      "include": [
-        "modules/core/*",
-        "modules/ambassadors/*",
-        "modules/shared/tasks-agenda/*",
-        "modules/seguros/marketing-leads/*"
-      ],
-      "options": {
-        "typecheck": {
-          "targetName": "typecheck"
-        },
-        "build": {
-          "targetName": "build",
-          "configName": "tsconfig.lib.json"
-        }
-      }
-    },
-    {
       "plugin": "@nx/eslint/plugin",
       "options": {
         "targetName": "lint"
@@ -41,21 +14,30 @@
     },
     "typecheck": {
       "cache": true,
+      "dependsOn": ["^build"],
       "inputs": [
         "default",
         "^default",
-        "{workspaceRoot}/tsconfig.base.json"
+        "{workspaceRoot}/tsconfig.base.json",
+        "{workspaceRoot}/package-lock.json"
       ]
     },
-    "@nx/js:tsc": {
+    "build": {
       "cache": true,
       "dependsOn": [
         "^build"
       ],
       "inputs": [
         "default",
-        "^default"
+        "^default",
+        "{workspaceRoot}/tsconfig.base.json",
+        "{workspaceRoot}/package-lock.json"
       ]
+    },
+    "test": {
+      "cache": false,
+      "dependsOn": ["build", "^build"],
+      "inputs": ["default", "^default", "{workspaceRoot}/tools/**/*", "{workspaceRoot}/eslint.config.mjs"]
     }
   },
   "analytics": true

@@ -4,6 +4,10 @@
   "projectType": "application",
   "sourceRoot": "apps/web/src",
   "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "options": { "command": "node tools/test-project.mjs web" }
+    },
     "build": {
       "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/dist/apps/web"],
@@ -27,5 +31,5 @@
       "cache": true
     }
   },
-  "tags": ["type:app", "source:frontend"]
+  "tags": ["type:app", "source:frontend", "layer:app"]
 }

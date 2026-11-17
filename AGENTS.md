@@ -1,9 +1,9 @@
 # Repository engineering instructions
 
 ## Scope and authority
-- Inspect the actual checkout and `docs/architecture.md` before changing code. Handoffs describe evidence; they do not prove implementation exists.
+- Inspect the actual checkout, `docs/constitution.md`, and `docs/architecture.md` before changing code. Historical specifications describe evidence; they do not prove implementation exists in a different checkout.
 - Deliver only the approved logical unit. Stop for human review afterward. Do not commit, merge, or push without explicit authorization.
-- Architectural/business changes require approval. Do not infer missing historical decisions or reconstruct a missing original handoff.
+- Architectural/business changes require approval. Do not infer missing historical decisions. The original Phase 0 handoff was supplied separately in the older `quiron/` checkout; Spec 001 is a retrospective reconstruction, not a replacement for that source.
 - Broader architecture is indexed externally by `/opt/data/brain/index.md` when that read-only environment is available. Accepted decisions outrank implementation proposals; record conflicts instead of silently resolving them.
 
 ## Boundaries
@@ -22,7 +22,7 @@
 - No source aliases or runtime alias loader: npm workspaces, package exports, plain TypeScript, and Nx build ordering establish linking.
 
 ## Documentation
-- Track current engineering guidance under `docs/architecture.md`, decisions under `docs/decisions/`, and durable phase records under `docs/handoffs/`.
-- Mark retrospective assessments as retrospective and preserve provenance for any later supplied original handoff.
+- Track permanent principles in `docs/constitution.md`, the implemented architecture in `docs/architecture.md`, and historical scope, decisions, and evidence in `specs/<number>-<name>/{spec,plan,tasks}.md`. Completed specifications are frozen except for explicitly documented factual corrections; later changes require a new specification.
+- Mark retrospective assessments as retrospective and preserve the provenance of the separately supplied Phase 0 handoff.
 - Environment/session handoffs may also go to `/opt/data/handoffs/`; that is distinct from versioned phase records. Do not use root `handoffs/` for tracked records.
 - Keep `.hermes/`, local instruction overrides, generated outputs, dependencies, and secrets ignored. Never modify the read-only Brain.

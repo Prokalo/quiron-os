@@ -1,8 +1,8 @@
 # Quirón OS
 
-The repository is an Nx domain-modular monolith. Phase 1.0A repairs the six-project skeleton, import boundaries, native package linking, and verification. Domain behavior is not implemented.
+The repository is an Nx domain-modular monolith. Phase 1.0A hardened the six-project skeleton, import boundaries, native package linking, and verification. Domain behavior is not implemented.
 
-Architecture, public package entrypoints, output ownership, and checks are documented in [docs/architecture.md](docs/architecture.md). The missing original Phase 0 handoff is addressed by a [retrospective reconciliation](docs/handoffs/phase-00-baseline-reconciliation.md), not a reconstructed historical handoff.
+The current implementation is documented in [architecture](docs/architecture.md), with six approved principles in the [constitution](docs/constitution.md). [Spec 001 — Architecture Foundation](specs/001-architecture-foundation/spec.md) and [Spec 002 — Architecture Hardening](specs/002-architecture-hardening/spec.md) preserve historical scope, decisions, evidence, and limits.
 
 Use Node 22. Install the locked dependencies and local workspace links with `npm ci`, then run the complete workspace validation:
 

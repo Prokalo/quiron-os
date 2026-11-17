@@ -10,7 +10,7 @@ import { readGraph, workspaceRoot } from '../check-projects.mjs';
 const require = createRequire(import.meta.url);
 
 test('real Nx/ESLint infrastructure edges and fail-closed negative controls', { timeout: 120_000 }, () => {
-  const dir = mkdtempSync(path.join(tmpdir(), 'qcrm-boundaries-'));
+  const dir = realpathSync(mkdtempSync(path.join(tmpdir(), 'qcrm-boundaries-')));
   const env = { ...process.env, NX_DAEMON: 'false', NX_NO_CLOUD: 'true', NX_SKIP_NX_CACHE: 'true', NX_NATIVE_FILE_CACHE_DIRECTORY: path.join(dir, '.nx/native') };
   delete env.NODE_TEST_CONTEXT;
   const run = (args, input, extraEnv = {}, cwd = dir) => {

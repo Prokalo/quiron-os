@@ -1,6 +1,6 @@
 # Spec 001 — Completion and evidence
 
-Status: original skeleton implemented; broader Mini CRM Phase 0 completion was **not** established. This record reconciles the separately supplied, ignored `quiron/handoffs/phase0-handoff.md` and `quiron/docs/phase0-architecture.md` with the [published retrospective at `9952cea`](https://github.com/Prokalo/quiron-os/blob/9952cea3885a2d10b9e7a43248813001e17b24a0/docs/handoffs/phase-00-baseline-reconciliation.md). The retrospective explicitly said the original handoff was unavailable in its environment; the later supplied local file remains in the older `quiron/` checkout and is not misrepresented as a tracked original.
+Status: original skeleton implemented; broader Mini CRM Phase 0 completion was **not** established. This record reconciles the separately supplied, ignored `quiron-os/handoffs/phase0-handoff.md` and `quiron-os/docs/phase0-architecture.md` with the [published retrospective at `9952cea`](https://github.com/Prokalo/quiron-os/blob/9952cea3885a2d10b9e7a43248813001e17b24a0/docs/handoffs/phase-00-baseline-reconciliation.md). The retrospective explicitly said the original handoff was unavailable in its environment; the later supplied local file remains in the older `quiron-os/` checkout and is not misrepresented as a tracked original.
 
 ## Checklist
 

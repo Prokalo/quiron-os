@@ -3,7 +3,7 @@
 ## Scope and authority
 - Inspect the actual checkout, `docs/constitution.md`, and `docs/architecture.md` before changing code. Historical specifications describe evidence; they do not prove implementation exists in a different checkout.
 - Deliver only the approved logical unit. Stop for human review afterward. Do not commit, merge, or push without explicit authorization.
-- Architectural/business changes require approval. Do not infer missing historical decisions. The original Phase 0 handoff was supplied separately in the older `quiron/` checkout; Spec 001 is a retrospective reconstruction, not a replacement for that source.
+- Architectural/business changes require approval. Do not infer missing historical decisions. The original Phase 0 handoff was supplied separately in the older `quiron-os/` checkout; Spec 001 is a retrospective reconstruction, not a replacement for that source.
 - Broader architecture is indexed externally by `/opt/data/brain/index.md` when that read-only environment is available. Accepted decisions outrank implementation proposals; record conflicts instead of silently resolving them.
 
 ## Boundaries

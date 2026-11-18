@@ -58,6 +58,7 @@ test('metadata validation rejects missing, null, unknown, and invalid fields', (
   }
   for (const field of ['correlationId', 'causationId']) {
     assert.throws(() => validateEventEnvelope({ ...valid, [field]: '' }), (error) => error.field === field);
+    assert.throws(() => validateEventEnvelope({ ...valid, [field]: '   ' }), (error) => error.field === field);
   }
 });
 
@@ -65,6 +66,12 @@ test('serialization preserves nested JSON payload values and empty objects', () 
   const payload = { empty: {}, nested: [{ amount: 0, active: false, note: null }, 'value'] };
   const event = createEventEnvelope({ eventType: 'record.created', sourceDomain: 'core', payload });
   assert.deepEqual(JSON.parse(serializeEventEnvelope(event)).payload, payload);
+});
+
+test('serialization accepts repeated references when the payload has no cycle', () => {
+  const shared = { count: 2 };
+  const event = createEventEnvelope({ eventType: 'record.created', sourceDomain: 'core', payload: { first: shared, second: shared } });
+  assert.deepEqual(JSON.parse(serializeEventEnvelope(event)).payload, { first: { count: 2 }, second: { count: 2 } });
 });
 
 test('payload validation rejects values JSON would drop or change', () => {

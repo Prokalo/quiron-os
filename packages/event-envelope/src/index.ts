@@ -130,6 +130,18 @@ export function serializeEventEnvelope(value: unknown): string {
   return JSON.stringify(validateEventEnvelope(value));
 }
 
+/** Parse and validate an existing event without assigning a new identity. */
+export function deserializeEventEnvelope(json: string): EventEnvelopeV1 {
+  if (typeof json !== 'string') fail('json', 'invalid_type');
+  let value: unknown;
+  try {
+    value = JSON.parse(json);
+  } catch {
+    fail('json', 'malformed_json');
+  }
+  return validateEventEnvelope(value);
+}
+
 /** Create a new event occurrence with its own UUID v4 identity. */
 export function createEventEnvelope(input: CreateEventEnvelopeInput): EventEnvelopeV1 {
   if (input === null || typeof input !== 'object' || Array.isArray(input)) fail('input', 'invalid_type');

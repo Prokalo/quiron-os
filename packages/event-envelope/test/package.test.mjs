@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { EVENT_ENVELOPE_SCHEMA_VERSION, EventEnvelopeValidationError, createEventEnvelope, serializeEventEnvelope, validateEventEnvelope } from '../dist/index.js';
+import { EVENT_ENVELOPE_SCHEMA_VERSION, EventEnvelopeValidationError, createEventEnvelope, deserializeEventEnvelope, serializeEventEnvelope, validateEventEnvelope } from '../dist/index.js';
 
 test('public package exports the V1 schema version', () => {
   assert.equal(EVENT_ENVELOPE_SCHEMA_VERSION, 1);
@@ -93,4 +93,30 @@ test('validation errors never echo sensitive payload or metadata values', () => 
   const invalid = { ...event, eventType: '', payload: { secret: 'credential-value' } };
   assert.throws(() => serializeEventEnvelope(invalid), (error) =>
     error instanceof EventEnvelopeValidationError && !error.message.includes('credential-value') && !error.message.includes('record.created'));
+});
+
+test('JSON round trips preserve every field and the existing event identity', () => {
+  const event = createEventEnvelope({
+    eventType: 'record.created',
+    sourceDomain: 'bp.sales',
+    occurredAt: '2024-02-29T23:59:59.123+05:30',
+    payload: { nested: [{ amount: 3, active: true }, null] },
+    correlationId: 'trace-1',
+    causationId: 'cause-1',
+  });
+  const read = deserializeEventEnvelope(serializeEventEnvelope(event));
+  assert.deepEqual(read, event);
+  assert.equal(read.eventId, event.eventId);
+  assert.strictEqual(validateEventEnvelope(event), event);
+  const noTracing = createEventEnvelope({ eventType: 'record.created', sourceDomain: 'core', payload: {} });
+  assert.deepEqual(deserializeEventEnvelope(serializeEventEnvelope(noTracing)), noTracing);
+  assert.equal(Object.hasOwn(deserializeEventEnvelope(serializeEventEnvelope(noTracing)), 'correlationId'), false);
+});
+
+test('deserialization rejects malformed or invalid JSON without leaking contents', () => {
+  for (const json of ['{ "secret": "credential-value",', '[]', 'null', '{"payload":{"secret":"credential-value"}}']) {
+    assert.throws(() => deserializeEventEnvelope(json), (error) =>
+      error instanceof EventEnvelopeValidationError && !error.message.includes('credential-value'));
+  }
+  assert.throws(() => deserializeEventEnvelope(42), (error) => error.field === 'json');
 });

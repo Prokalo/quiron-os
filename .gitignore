@@ -1,14 +1,10 @@
-# ============================================================
-# Operating System
-# ============================================================
+# Operating system
 .DS_Store
 Thumbs.db
 Desktop.ini
 
 
-# ============================================================
-# IDE / Editor
-# ============================================================
+# IDE and editor
 .vscode/
 .idea/
 *.swp
@@ -16,67 +12,52 @@ Desktop.ini
 *~
 
 
-# ============================================================
-# Environment Variables & Secrets
-# ============================================================
+# Environment variables and secrets
 .env
 .env.*
 !.env.example
 !.env.*.example
-
 *.pem
 *.key
 *.p12
 *.pfx
 
 
-# ============================================================
-# JavaScript / Node
-# ============================================================
+# Node
 node_modules/
-
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-
 *.tsbuildinfo
 
 
-# ============================================================
 # Nx
-# ============================================================
-.nx/cache/
-.nx/workspace-data/
-.nx/migrate-runs/
+.nx/
 
 
-# ============================================================
-# Build Outputs
-# ============================================================
+# Specifications
+specs/
+
+
+# Build output
 dist/
 build/
 out/
 
 
-# ============================================================
 # Python
-# ============================================================
 .venv/
 venv/
 env/
-
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-
 .python-version
 
 
-# ============================================================
-# Python Tooling / Caches
-# ============================================================
+# Python tooling and caches
 .ruff_cache/
 .pytest_cache/
 .mypy_cache/
@@ -85,23 +66,17 @@ __pycache__/
 .nox/
 
 
-# ============================================================
-# Test & Coverage Outputs
-# ============================================================
+# Test and coverage output
 coverage/
 reports/
 htmlcov/
-
 .coverage
 .coverage.*
 *.cover
-
 junit.xml
 
 
-# ============================================================
-# Temporary Files
-# ============================================================
+# Temporary files
 tmp/
 temp/
 *.tmp
@@ -110,22 +85,17 @@ temp/
 *.log
 
 
-# ============================================================
-# Visualization / Generated Architecture Artifacts
-# ============================================================
+# Generated architecture artifacts
 graphify-out/
 
-# ============================================================
-# Local Databases / Runtime Data
-# ============================================================
+
+# Local databases and runtime data
 *.sqlite
 *.sqlite3
 *.db
 
 
-# ============================================================
-# Local AI / Model Artifacts
-# ============================================================
+# Local AI and model artifacts
 models/
 *.gguf
 *.onnx
@@ -133,9 +103,7 @@ AGENTS.local.md
 CLAUDE.local.md
 
 
-# ============================================================
-# Local Uploads / Generated Files
-# ============================================================
+# Local uploads and generated files
 uploads/
 .hermes/
 /handoffs/

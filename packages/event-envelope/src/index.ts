@@ -158,7 +158,7 @@ export function createEventEnvelope(input: CreateEventEnvelopeInput): EventEnvel
     eventId: `${input.sourceDomain}-${globalThis.crypto.randomUUID()}`,
     eventType: input.eventType,
     sourceDomain: input.sourceDomain,
-    occurredAt: input.occurredAt ?? new Date().toISOString(),
+    occurredAt: input.occurredAt === undefined ? new Date().toISOString() : input.occurredAt,
     payload: input.payload,
     schemaVersion: EVENT_ENVELOPE_SCHEMA_VERSION,
     ...(input.correlationId === undefined ? {} : { correlationId: input.correlationId }),

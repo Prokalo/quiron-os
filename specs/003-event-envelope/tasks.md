@@ -1,6 +1,6 @@
 # 003 — Event Envelope · Tasks
 
-**Status:** Draft | **Plan:** ./plan.md
+**Status:** In Review | **Plan:** ./plan.md
 
 Complete one approved task at a time. After each implementation unit, update `handoff.md` and stop for review and commit approval as required by `AGENTS.md`. All paths and checks below refer to the current checkout.
 
@@ -18,9 +18,9 @@ Complete one approved task at a time. After each implementation unit, update `ha
 
 ## Verification and review
 
-- [ ] **T10** Claude Code reviews the approved contract, layer and output boundaries, test quality, mutation evidence, and regression risk; record findings in the handoff.
-- [ ] **T11** Resolve review findings within the approved unit, rerun affected checks and the required gate, then request Elias's approval. Do not commit, merge, push, or start the next unit without explicit authorization.
+- [x] **T10** Claude Code reviews the approved contract, layer and output boundaries, test quality, mutation evidence, and regression risk; record findings in the handoff.
+- [x] **T11** Resolve review findings within the approved unit, rerun affected checks and the required gate, then request Elias's approval. Do not commit, merge, push, or start the next unit without explicit authorization.
 
 ## Completion record
 
-**Checks:** pending | **Review:** pending | **Approval:** pending
+**Checks:** `npm run check` passed after review | **Review:** Claude Code found no blockers; null timestamp observation resolved | **Approval:** pending

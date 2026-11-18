@@ -60,6 +60,10 @@ test('metadata validation rejects missing, null, unknown, and invalid fields', (
     assert.throws(() => validateEventEnvelope({ ...valid, [field]: '' }), (error) => error.field === field);
     assert.throws(() => validateEventEnvelope({ ...valid, [field]: '   ' }), (error) => error.field === field);
   }
+  assert.throws(
+    () => createEventEnvelope({ eventType: 'record.created', sourceDomain: 'core', payload: {}, occurredAt: null }),
+    (error) => error.field === 'occurredAt',
+  );
 });
 
 test('serialization preserves nested JSON payload values and empty objects', () => {

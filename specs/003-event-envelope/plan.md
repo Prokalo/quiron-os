@@ -1,6 +1,6 @@
 # Plan 003 — Event Envelope
 
-**Status:** Draft  
+**Status:** In Review  
 **Spec:** ./spec.md
 
 ## 1. Technical Approach
@@ -49,7 +49,7 @@ Run relevant negative controls and mutations in disposable copies, including rem
 
 ## 9. Decisions & Risks
 
-The seventh infrastructure project, `globalThis.crypto.randomUUID()`, domain-prefixed IDs, exact V1 top-level fields, and `sourceDomain` grammar are approved decisions, not yet implemented. All four current module names satisfy the grammar; its dot form is allowed for future domain names but is not used by those names. Timestamp checks must verify calendar validity without changing valid strings. Serialization must detect values that `JSON.stringify` silently discards or transforms. The graph report came from `ecd98764`; direct repository inspection governs paths and tooling.
+The seventh infrastructure project, `globalThis.crypto.randomUUID()`, domain-prefixed IDs, exact V1 top-level fields, and `sourceDomain` grammar are implemented on the Spec 003 feature branch. All four current module names satisfy the grammar; its dot form is allowed for future domain names but is not used by those names. Timestamp checks verify calendar validity without changing valid strings. Serialization rejects values that `JSON.stringify` silently discards or transforms, including negative zero. The graph report came from `ecd98764`; direct repository inspection governs paths and tooling.
 
 ## 10. Requirement Coverage
 

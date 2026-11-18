@@ -181,6 +181,12 @@ export function boundaryCases(name) {
     at('API consumer cannot load another generated output', consumer, "import '../../../dist/apps/api/main.js';", 'qcrm/relative-import-policy');
     at('other API tests cannot inherit fixture output access', testPath, "import '../../../dist/test-fixtures/api/consume-libraries.js';", 'qcrm/relative-import-policy');
   }
+  if (name === 'event-envelope') {
+    const contractTest = path.join(root, 'test/package.test.mjs');
+    at('designated envelope test can load its own compiled entry', contractTest, "import '../dist/index.js';");
+    at('other envelope tests cannot load compiled output', testPath, "import '../dist/index.js';", 'qcrm/relative-import-policy');
+    at('designated envelope test cannot load another output', contractTest, "import '../dist/other.js';", 'qcrm/relative-import-policy');
+  }
   for (const [target, pkg] of Object.entries(libraries)) {
     if (target !== name) {
       const rule = mayImport(name, target) ? null : '@nx/enforce-module-boundaries';

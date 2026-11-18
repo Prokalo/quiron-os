@@ -23,6 +23,8 @@ const publicImportPatterns = [{
 }];
 const fixtureConsumer = 'apps/api/test/library-consumption.test.mjs';
 const fixtureImport = '../../../dist/test-fixtures/api/consume-libraries.js';
+const envelopeTest = 'packages/event-envelope/test/package.test.mjs';
+const envelopeOutput = '../dist/index.js';
 
 // Nx already rejects external relative paths. Close only the demonstrated
 // same-project artifact/test-tooling gaps, using lexical containment, not resolution.
@@ -44,7 +46,8 @@ const relativeImportPolicy = {
       const specifier = node?.value;
       if (typeof specifier !== 'string' || !/^\.\.?\//.test(specifier)) return;
       const target = path.resolve(path.dirname(context.filename), specifier);
-      const fixture = source === fixtureConsumer && specifier === fixtureImport;
+      const fixture = (source === fixtureConsumer && specifier === fixtureImport) ||
+        (source === envelopeTest && specifier === envelopeOutput);
       if (!fixture && path.relative(import.meta.dirname, target).split(path.sep).some((part) => ['dist', 'node_modules'].includes(part))) {
         context.report({ node, messageId: 'artifact' });
       } else if (!isTest && (target === testRoot.slice(0, -1) || target.startsWith(testRoot))) {

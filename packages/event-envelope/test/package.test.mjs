@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { EVENT_ENVELOPE_SCHEMA_VERSION, createEventEnvelope } from '../dist/index.js';
+import { EVENT_ENVELOPE_SCHEMA_VERSION, EventEnvelopeValidationError, createEventEnvelope, validateEventEnvelope } from '../dist/index.js';
 
 test('public package exports the V1 schema version', () => {
   assert.equal(EVENT_ENVELOPE_SCHEMA_VERSION, 1);
@@ -25,4 +25,38 @@ test('creation retains supplied optional tracing IDs', () => {
   assert.equal(event.correlationId, 'trace-1');
   assert.equal(event.causationId, 'cause-1');
   assert.match(event.occurredAt, /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/);
+});
+
+test('metadata validation accepts the domain grammar and explicit timezone offsets', () => {
+  for (const domain of ['core', 'tasks-agenda', 'seguros-marketing-leads', 'bp.sales']) {
+    const event = createEventEnvelope({ eventType: 'record.created', sourceDomain: domain, payload: {}, occurredAt: '2024-02-29T23:59:59.123+05:30' });
+    assert.strictEqual(validateEventEnvelope(event), event);
+  }
+});
+
+test('metadata validation rejects missing, null, unknown, and invalid fields', () => {
+  const valid = createEventEnvelope({ eventType: 'record.created', sourceDomain: 'core', payload: {}, occurredAt: '2024-02-29T23:59:59Z' });
+  for (const field of ['eventId', 'eventType', 'sourceDomain', 'occurredAt', 'payload', 'schemaVersion']) {
+    const missing = { ...valid };
+    delete missing[field];
+    assert.throws(() => validateEventEnvelope(missing), (error) => error instanceof EventEnvelopeValidationError && error.field === field);
+    assert.throws(() => validateEventEnvelope({ ...valid, [field]: null }), EventEnvelopeValidationError);
+  }
+  assert.throws(() => validateEventEnvelope({ ...valid, extra: 'secret' }), (error) => error.code === 'unknown_field' && !error.message.includes('secret'));
+  assert.throws(() => createEventEnvelope({ eventType: 'record.created', sourceDomain: 'core', payload: {}, extra: 'secret' }), (error) => error.code === 'unknown_field' && !error.message.includes('secret'));
+  for (const version of [0, 2, 1.5, '1']) {
+    assert.throws(() => validateEventEnvelope({ ...valid, schemaVersion: version }), (error) => error.field === 'schemaVersion');
+  }
+  for (const domain of ['', 'Core', 'a..b', 'a-', '-a', 'a_b', 'a b']) {
+    assert.throws(() => createEventEnvelope({ eventType: 'record.created', sourceDomain: domain, payload: {} }), (error) => error.field === 'sourceDomain');
+  }
+  for (const eventId of ['other-' + valid.eventId.slice(5), 'core-not-a-uuid', 'core-00000000-0000-1000-8000-000000000000']) {
+    assert.throws(() => validateEventEnvelope({ ...valid, eventId }), (error) => error.field === 'eventId');
+  }
+  for (const occurredAt of ['2024-02-30T00:00:00Z', '2023-02-29T00:00:00Z', '2024-01-01T00:00:00', '2024-01-01T25:00:00Z', '2024-01-01T00:00:00+24:00']) {
+    assert.throws(() => validateEventEnvelope({ ...valid, occurredAt }), (error) => error.field === 'occurredAt');
+  }
+  for (const field of ['correlationId', 'causationId']) {
+    assert.throws(() => validateEventEnvelope({ ...valid, [field]: '' }), (error) => error.field === field);
+  }
 });

@@ -5,11 +5,14 @@ import { fileURLToPath } from 'node:url';
 import { ESLint } from 'eslint';
 import { projectRoots, readGraph, validateProjects, workspaceRoot } from './check-projects.mjs';
 
-const modules = Object.fromEntries(
-  Object.entries(projectRoots).filter(([, root]) => root.startsWith('modules/')).map(([name, root]) =>
+const libraries = Object.fromEntries(
+  Object.entries(projectRoots).filter(([, root]) => root.startsWith('modules/') || root.startsWith('packages/')).map(([name, root]) =>
     [name, JSON.parse(readFileSync(path.join(workspaceRoot, root, 'package.json'))).name],
   ),
 );
+
+const mayImport = (source, target) =>
+  projectRoots[source].startsWith('apps/') || (target === 'event-envelope' && source !== target);
 
 /** Describe expected policy; ESLint/Nx, not this matrix, enforces production code. */
 export function boundaryCases(name) {
@@ -125,10 +128,10 @@ export function boundaryCases(name) {
     at(`test ${extension} local helper`, source, "import './helpers/local.mjs';");
     at(`test ${extension} normalized local helper`, source, "import './helpers/../helpers/local.mjs';");
     at(`test ${extension} own source`, source, `import '../src/${isApp ? 'main' : 'index'}.js';`);
-    for (const [target, pkg] of Object.entries(modules)) {
+    for (const [target, pkg] of Object.entries(libraries)) {
       if (target !== name) {
-        at(`test ${extension} ${target} public root`, source, `import '${pkg}';`, isApp ? null : '@nx/enforce-module-boundaries');
-        at(`test ${extension} ${target} public re-export`, source, `export * from '${pkg}';`, isApp ? null : '@nx/enforce-module-boundaries');
+        at(`test ${extension} ${target} public root`, source, `import '${pkg}';`, mayImport(name, target) ? null : '@nx/enforce-module-boundaries');
+        at(`test ${extension} ${target} public re-export`, source, `export * from '${pkg}';`, mayImport(name, target) ? null : '@nx/enforce-module-boundaries');
         const relative = path.relative(path.dirname(source), path.join(projectRoots[target], 'src/index.js'));
         at(`test ${extension} ${target} cross-project path`, source, `import '${relative}';`, '@nx/enforce-module-boundaries');
       }
@@ -178,9 +181,15 @@ export function boundaryCases(name) {
     at('API consumer cannot load another generated output', consumer, "import '../../../dist/apps/api/main.js';", 'qcrm/relative-import-policy');
     at('other API tests cannot inherit fixture output access', testPath, "import '../../../dist/test-fixtures/api/consume-libraries.js';", 'qcrm/relative-import-policy');
   }
-  for (const [target, pkg] of Object.entries(modules)) {
+  if (name === 'event-envelope') {
+    const contractTest = path.join(root, 'test/package.test.mjs');
+    at('designated envelope test can load its own compiled entry', contractTest, "import '../dist/index.js';");
+    at('other envelope tests cannot load compiled output', testPath, "import '../dist/index.js';", 'qcrm/relative-import-policy');
+    at('designated envelope test cannot load another output', contractTest, "import '../dist/other.js';", 'qcrm/relative-import-policy');
+  }
+  for (const [target, pkg] of Object.entries(libraries)) {
     if (target !== name) {
-      const rule = isApp ? null : '@nx/enforce-module-boundaries';
+      const rule = mayImport(name, target) ? null : '@nx/enforce-module-boundaries';
       add(`${target} public root`, `import '${pkg}';`, rule);
       add(`${target} public type import`, `import type * as Types from '${pkg}';`, rule);
       add(`${target} public re-export`, `export * from '${pkg}';`, rule);

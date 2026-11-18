@@ -7,7 +7,8 @@
     "modules/core",
     "modules/ambassadors",
     "modules/shared/tasks-agenda",
-    "modules/seguros/marketing-leads"
+    "modules/seguros/marketing-leads",
+    "packages/event-envelope"
   ],
   "main": "index.js",
   "directories": {

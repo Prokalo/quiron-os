@@ -11,19 +11,20 @@ export const projectRoots = {
   ambassadors: 'modules/ambassadors',
   'tasks-agenda': 'modules/shared/tasks-agenda',
   'seguros-marketing-leads': 'modules/seguros/marketing-leads',
+  'event-envelope': 'packages/event-envelope',
   api: 'apps/api',
   web: 'apps/web',
 };
 
 /** Validate the actual graph so Nx cannot silently skip missing test targets. */
 export function validateProjects(nodes, root = workspaceRoot) {
-  assert.deepEqual(Object.keys(nodes).sort(), Object.keys(projectRoots).sort(), 'Expected the six approved production projects');
+  assert.deepEqual(Object.keys(nodes).sort(), Object.keys(projectRoots).sort(), 'Expected the seven approved production projects');
   const outputs = [];
   for (const [name, node] of Object.entries(nodes)) {
     const data = node.data;
     assert.equal(data.root, projectRoots[name], `${name}: unexpected project root`);
     const layers = (data.tags ?? []).filter((tag) => tag.startsWith('layer:'));
-    assert.deepEqual(layers, [name === 'api' || name === 'web' ? 'layer:app' : 'layer:module'], `${name}: invalid layer`);
+    assert.deepEqual(layers, [name === 'api' || name === 'web' ? 'layer:app' : name === 'event-envelope' ? 'layer:infrastructure' : 'layer:module'], `${name}: invalid layer`);
     for (const target of ['lint', 'typecheck', 'build', 'test']) {
       assert.ok(data.targets?.[target], `${name}: missing ${target} target`);
     }
@@ -72,5 +73,5 @@ export function readGraph(root = workspaceRoot) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   validateProjects(readGraph().nodes);
-  console.log('Verified six projects: layers, lint/typecheck/build/test targets, test files, disjoint build outputs.');
+  console.log('Verified seven projects: layers, lint/typecheck/build/test targets, test files, disjoint build outputs.');
 }

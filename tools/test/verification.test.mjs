@@ -32,7 +32,12 @@ test('preflight rejects missing, contradictory, or misclassified layers', () => 
 test('preflight rejects unexpected projects', () => {
   const nodes = structuredClone(graph.nodes);
   nodes.unapproved = structuredClone(nodes.core);
-  assert.throws(() => validateProjects(nodes), /six approved production projects/);
+  assert.throws(() => validateProjects(nodes), /seven approved production projects/);
+});
+test('preflight rejects a non-infrastructure event-envelope project', () => {
+  const nodes = structuredClone(graph.nodes);
+  nodes['event-envelope'].data.tags = ['type:shared', 'source:event-envelope', 'layer:module'];
+  assert.throws(() => validateProjects(nodes), /event-envelope: invalid layer/);
 });
 test('preflight fails on empty project test discovery', () => {
   const dir = mkdtempSync(path.join(tmpdir(), 'qcrm-no-tests-'));

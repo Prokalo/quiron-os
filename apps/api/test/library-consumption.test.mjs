@@ -27,3 +27,10 @@ test('API consumer compilation disables source aliases', () => {
   assert.deepEqual(config.compilerOptions.paths, {});
   assert.equal(base.compilerOptions.paths, undefined);
 });
+
+test('API fixture creates and round trips an event through the built public package', () => {
+  const envelope = loadedPackages['@quiron/event-envelope'];
+  const event = envelope.createEventEnvelope({ eventType: 'record.created', sourceDomain: 'core', payload: { count: 1 } });
+  assert.deepEqual(envelope.deserializeEventEnvelope(envelope.serializeEventEnvelope(event)), event);
+  assert.match(event.eventId, /^core-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+});

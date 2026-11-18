@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { EVENT_ENVELOPE_SCHEMA_VERSION, EventEnvelopeValidationError, createEventEnvelope, validateEventEnvelope } from '../dist/index.js';
+import { EVENT_ENVELOPE_SCHEMA_VERSION, EventEnvelopeValidationError, createEventEnvelope, serializeEventEnvelope, validateEventEnvelope } from '../dist/index.js';
 
 test('public package exports the V1 schema version', () => {
   assert.equal(EVENT_ENVELOPE_SCHEMA_VERSION, 1);
@@ -59,4 +59,38 @@ test('metadata validation rejects missing, null, unknown, and invalid fields', (
   for (const field of ['correlationId', 'causationId']) {
     assert.throws(() => validateEventEnvelope({ ...valid, [field]: '' }), (error) => error.field === field);
   }
+});
+
+test('serialization preserves nested JSON payload values and empty objects', () => {
+  const payload = { empty: {}, nested: [{ amount: 0, active: false, note: null }, 'value'] };
+  const event = createEventEnvelope({ eventType: 'record.created', sourceDomain: 'core', payload });
+  assert.deepEqual(JSON.parse(serializeEventEnvelope(event)).payload, payload);
+});
+
+test('payload validation rejects values JSON would drop or change', () => {
+  const cyclic = {};
+  cyclic.self = cyclic;
+  const sparse = [];
+  sparse[1] = 'value';
+  const extraArrayProperty = ['value'];
+  extraArrayProperty.extra = 'hidden';
+  const hidden = {};
+  Object.defineProperty(hidden, 'secret', { value: 'private', enumerable: false });
+  const getter = {};
+  Object.defineProperty(getter, 'secret', { get: () => 'private', enumerable: true });
+  const values = [undefined, () => 1, Symbol('secret'), 1n, NaN, Infinity, -Infinity, -0, cyclic, sparse, extraArrayProperty, hidden, getter, new Date()];
+  for (const value of values) {
+    assert.throws(
+      () => createEventEnvelope({ eventType: 'record.created', sourceDomain: 'core', payload: { value } }),
+      (error) => error instanceof EventEnvelopeValidationError && error.field === 'payload' && !error.message.includes('private'),
+    );
+  }
+  assert.throws(() => createEventEnvelope({ eventType: 'record.created', sourceDomain: 'core', payload: [] }), (error) => error.field === 'payload');
+});
+
+test('validation errors never echo sensitive payload or metadata values', () => {
+  const event = createEventEnvelope({ eventType: 'record.created', sourceDomain: 'core', payload: { secret: 'credential-value' } });
+  const invalid = { ...event, eventType: '', payload: { secret: 'credential-value' } };
+  assert.throws(() => serializeEventEnvelope(invalid), (error) =>
+    error instanceof EventEnvelopeValidationError && !error.message.includes('credential-value') && !error.message.includes('record.created'));
 });

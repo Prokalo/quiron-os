@@ -67,6 +67,36 @@ function isValidTimestamp(value: string): boolean {
   return true;
 }
 
+/** Reject values that JSON would silently drop, coerce, or change during transport. */
+function validatePayload(value: unknown): void {
+  const pending: unknown[] = [value];
+  const seen = new WeakSet<object>();
+  while (pending.length) {
+    const current = pending.pop();
+    if (current === null || typeof current === 'string' || typeof current === 'boolean') continue;
+    if (typeof current === 'number') {
+      if (!Number.isFinite(current) || Object.is(current, -0)) fail('payload', 'invalid_value');
+      continue;
+    }
+    if (typeof current !== 'object') fail('payload', 'invalid_value');
+    if (seen.has(current)) fail('payload', 'cyclic_value');
+    seen.add(current);
+    if (!Array.isArray(current) && Object.getPrototypeOf(current) !== Object.prototype) fail('payload', 'invalid_type');
+    if (Array.isArray(current)) {
+      for (let index = 0; index < current.length; index++) {
+        if (!Object.hasOwn(current, index)) fail('payload', 'invalid_value');
+      }
+    }
+    for (const key of Reflect.ownKeys(current)) {
+      if (Array.isArray(current) && key === 'length') continue;
+      if (typeof key !== 'string' || (Array.isArray(current) && !/^(0|[1-9]\d*)$/.test(key))) fail('payload', 'invalid_value');
+      const descriptor = Object.getOwnPropertyDescriptor(current, key);
+      if (!descriptor || !descriptor.enumerable || !('value' in descriptor)) fail('payload', 'invalid_value');
+      pending.push(descriptor.value);
+    }
+  }
+}
+
 /** Validate V1 metadata and return the original envelope without changing its identity. */
 export function validateEventEnvelope(value: unknown): EventEnvelopeV1 {
   if (value === null || typeof value !== 'object' || Array.isArray(value) || Object.getPrototypeOf(value) !== Object.prototype) {
@@ -76,8 +106,10 @@ export function validateEventEnvelope(value: unknown): EventEnvelopeV1 {
   for (const field of requiredFields) {
     if (!Object.hasOwn(fields, field) || fields[field] === null) fail(field, 'required');
   }
-  for (const field of Object.keys(fields)) {
-    if (!allowedFields.has(field)) fail('envelope', 'unknown_field');
+  for (const field of Reflect.ownKeys(fields)) {
+    if (typeof field !== 'string' || !allowedFields.has(field)) fail('envelope', 'unknown_field');
+    const descriptor = Object.getOwnPropertyDescriptor(fields, field);
+    if (!descriptor || !descriptor.enumerable || !('value' in descriptor)) fail('envelope', 'invalid_value');
   }
   if (typeof fields['eventType'] !== 'string' || !fields['eventType'].trim()) fail('eventType', 'invalid_value');
   if (typeof fields['sourceDomain'] !== 'string' || !sourceDomainPattern.test(fields['sourceDomain'])) fail('sourceDomain', 'invalid_value');
@@ -86,10 +118,16 @@ export function validateEventEnvelope(value: unknown): EventEnvelopeV1 {
   if (typeof fields['occurredAt'] !== 'string' || !isValidTimestamp(fields['occurredAt'])) fail('occurredAt', 'invalid_value');
   if (fields['schemaVersion'] !== EVENT_ENVELOPE_SCHEMA_VERSION) fail('schemaVersion', 'unsupported_version');
   if (fields['payload'] === null || typeof fields['payload'] !== 'object' || Array.isArray(fields['payload'])) fail('payload', 'invalid_type');
+  validatePayload(fields['payload']);
   for (const field of ['correlationId', 'causationId']) {
     if (Object.hasOwn(fields, field) && (typeof fields[field] !== 'string' || !fields[field])) fail(field, 'invalid_value');
   }
   return value as EventEnvelopeV1;
+}
+
+/** Serialize a fully validated V1 envelope without dropping payload values. */
+export function serializeEventEnvelope(value: unknown): string {
+  return JSON.stringify(validateEventEnvelope(value));
 }
 
 /** Create a new event occurrence with its own UUID v4 identity. */

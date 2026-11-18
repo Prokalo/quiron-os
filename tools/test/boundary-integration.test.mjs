@@ -22,7 +22,7 @@ test('real Nx/ESLint infrastructure edges and fail-closed negative controls', { 
   const save = (file, value) => writeFileSync(path.join(dir, file), JSON.stringify(value, null, 2));
   try {
     // Copy the current worktree, including uncommitted remediation; never archive old HEAD.
-    for (const item of ['apps', 'modules', 'tools', 'eslint.config.mjs', 'nx.json', 'package.json', 'tsconfig.json', 'tsconfig.base.json']) {
+    for (const item of ['apps', 'modules', 'packages', 'tools', 'eslint.config.mjs', 'nx.json', 'package.json', 'tsconfig.json', 'tsconfig.base.json']) {
       cpSync(path.join(workspaceRoot, item), path.join(dir, item), {
         recursive: true,
         filter: (file) => !['node_modules', '.nx'].includes(path.basename(file)) && !path.basename(file).startsWith('.env'),
@@ -108,10 +108,12 @@ test('real Nx/ESLint infrastructure edges and fail-closed negative controls', { 
     lint('packages/boundary-contract-fixture/test/tooling.mjs', "import '@quiron/core';", '@nx/enforce-module-boundaries');
     lint('packages/boundary-contract-fixture/test/tooling.mjs', `import '${contract}/src/index.js';`, 'no-restricted-imports');
     lint('packages/boundary-contract-fixture/test/tooling.mjs', "import './helpers/local.mjs';");
-    // Remove the test-only projects before exercising the actual six-project gate.
+    // Remove only the test-only projects before exercising the actual seven-project gate.
     writeFileSync(path.join(dir, 'package.json'), originalPackage);
-    rmSync(path.join(dir, 'packages'), { recursive: true });
-    for (const name of ['boundary-contract-fixture', 'boundary-infrastructure-fixture']) rmSync(path.join(dir, 'node_modules/@quiron', name));
+    for (const name of ['boundary-contract-fixture', 'boundary-infrastructure-fixture']) {
+      rmSync(path.join(dir, 'packages', name), { recursive: true });
+      rmSync(path.join(dir, 'node_modules/@quiron', name));
+    }
     readGraph(dir);
     const baseline = run(['tools/check-module-boundaries.mjs']);
     assert.equal(baseline.status, 0, baseline.output);
@@ -220,7 +222,7 @@ test('real Nx/ESLint infrastructure edges and fail-closed negative controls', { 
     const fixtureFile = path.join(dir, 'apps/api/test/fixtures/consume-libraries.ts');
     const fixture = readFileSync(fixtureFile, 'utf8');
     const withFixture = readGraph(dir);
-    assert.deepEqual(withFixture.dependencies.api.map((edge) => edge.target).sort(), ['ambassadors', 'core', 'seguros-marketing-leads', 'tasks-agenda']);
+    assert.deepEqual(withFixture.dependencies.api.map((edge) => edge.target).sort(), ['ambassadors', 'core', 'event-envelope', 'seguros-marketing-leads', 'tasks-agenda']);
     rmSync(fixtureFile);
     assert.deepEqual(readGraph(dir).dependencies.api, [], 'API graph edges are test-fixture imports, not production composition');
     writeFileSync(fixtureFile, fixture);
